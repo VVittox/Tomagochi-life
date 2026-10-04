@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Инструкция по проекту «Тамагочи» — Этап 1</title>
+<style>
+  body {
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 40px;
+    color: #222;
+  }
+  h1 {
+    font-size: 26px;
+    border-bottom: 3px solid #6a1b9a;
+    padding-bottom: 10px;
+    color: #4a148c;
+  }
+  h2 {
+    font-size: 19px;
+    margin-top: 28px;
+    color: #6a1b9a;
+    border-bottom: 1px solid #ce93d8;
+    padding-bottom: 4px;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 15.5px;
+    margin-top: 20px;
+    color: #283593;
+    page-break-after: avoid;
+  }
+  p, li { margin: 6px 0; }
+  code {
+    background: #f4f4f4;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    color: #c2185b;
+  }
+  pre {
+    background: #f7f7f9;
+    padding: 12px 14px;
+    border-radius: 6px;
+    border-left: 4px solid #6a1b9a;
+    overflow-x: auto;
+    font-family: Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.45;
+    page-break-inside: avoid;
+    white-space: pre-wrap;
+    color: #1a1a1a;
+  }
+  ul, ol { margin-left: 22px; padding-left: 0; }
+  .note {
+    background: #fff8e1;
+    border-left: 4px solid #ffc107;
+    padding: 10px 14px;
+    margin: 16px 0;
+    border-radius: 4px;
+  }
+  .roles {
+    background: #e8eaf6;
+    border-left: 4px solid #3f51b5;
+    padding: 10px 14px;
+    margin: 16px 0;
+    border-radius: 4px;
+  }
+  .page-break { page-break-before: always; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+    text-align: left;
+  }
+  th { background: #f3e5f5; }
+</style>
+</head>
+<body>
+
+<h1>Проект «Тамагочи» — Этап 1</h1>
+<p><b>Промышленное программирование.</b> Консольный виртуальный питомец на Python: класс, состояние, действия, игровое время.</p>
+
+<h2>1. Сжатый план проекта</h2>
+<p><b>Что делаем:</b> консольный виртуальный питомец.</p>
+
+<p><b>Ядро — класс <code>Pet</code>:</b></p>
+<ul>
+  <li>Состояние: <code>name</code>, <code>hunger</code>, <code>mood</code>, <code>energy</code> — все значения в диапазоне 0..10.</li>
+  <li>Действия: <code>feed()</code>, <code>play()</code>, <code>sleep()</code>, <code>wake_up()</code>.</li>
+  <li>Время: <code>pass_time(hours)</code>, <code>wants_to_sleep(hour)</code>.</li>
+  <li>Вывод: <code>__str__()</code>.</li>
+</ul>
+
+<p><b>Правила:</b></p>
+<ul>
+  <li>Значения <b>никогда</b> не выходят за пределы 0..10.</li>
+  <li>Ночью (22:00–06:00) питомец хочет спать.</li>
+  <li>Сон повышает энергию, кормление снижает голод, игра повышает настроение.</li>
+  <li>Ошибки не должны ронять программу (свои исключения + <code>try/except</code> в меню).</li>
+</ul>
+
+<p><b>Командные роли:</b></p>
+<table>
+  <tr><th>Роль</th><th>Ответственность</th></tr>
+  <tr><td>A</td><td>Состояние класса <code>Pet</code>, <code>__str__</code></td></tr>
+  <tr><td>B</td><td><code>feed()</code>, <code>play()</code>, <code>sleep()</code>, <code>wake_up()</code></td></tr>
+  <tr><td>C</td><td>Игровое время, <code>pass_time()</code>, <code>wants_to_sleep()</code></td></tr>
+  <tr><td>D</td><td>Исключения и проверки</td></tr>
+  <tr><td>E</td><td>Меню и основной цикл</td></tr>
+  <tr><td>F</td><td>Тесты</td></tr>
+  <tr><td>G / H</td><td>Сборка проекта и сдача</td></tr>
+</table>
+
+<p><b>Порядок работы:</b></p>
+<ol>
+  <li>A пишет каркас класса.</li>
+  <li>B добавляет действия.</li>
+  <li>C добавляет время.</li>
+  <li>D добавляет исключения.</li>
+  <li>E собирает меню.</li>
+  <li>F тестирует.</li>
+  <li>G/H собирают всё в один файл и сдают.</li>
+</ol>
+
+<p><b>Сдача:</b> рабочий файл в Eduapp + сообщения в RocketChat.</p>
+
+<div class="page-break"></div>
+
+<h2>2. Подробная инструкция</h2>
+
+<h3>Шаг 0. Подготовка</h3>
+<ul>
+  <li>Установи Python 3.10+.</li>
+  <li>Создай папку <code>tamagotchi_project</code>.</li>
+  <li>Внутри — файл <code>tamagotchi.py</code>.</li>
+</ul>
+
+<h3>Шаг 1. Исключения (роль D)</h3>
+<pre>class PetError(Exception):
+    """Базовое исключение питомца."""
+    pass
+
+class PetTooTiredError(PetError):
+    pass
+
+class PetTooHungryError(PetError):
+    pass
+
+class PetAsleepError(PetError):
+    pass</pre>
+
+<h3>Шаг 2. Класс Pet — каркас (роль A)</h3>
+<pre>class Pet:
+    MIN_VALUE = 0
+    MAX_VALUE = 10
+
+    def __init__(self, name):
+        self.name = name
+        self.hunger = 5
+        self.mood = 5
+        self.energy = 5
+        self.is_sleeping = False
+        self.hour = 12  # игровое время
+
+    def _clamp(self):
+        self.hunger = max(self.MIN_VALUE, min(self.MAX_VALUE, self.hunger))
+        self.mood = max(self.MIN_VALUE, min(self.MAX_VALUE, self.mood))
+        self.energy = max(self.MIN_VALUE, min(self.MAX_VALUE, self.energy))</pre>
+
+<h3>Шаг 3. Действия (роль B)</h3>
+<pre>    def feed(self):
+        if self.is_sleeping:
+            raise PetAsleepError(f"{self.name} спит и не может есть")
+        self.hunger -= 3
+        self.mood += 1
+        self._clamp()
+        print(f"{self.name} покушал. Голод: {self.hunger}")
+
+    def play(self):
+        if self.is_sleeping:
+            raise PetAsleepError(f"{self.name} спит и не может играть")
+        if self.energy &lt; 2:
+            raise PetTooTiredError(f"{self.name} слишком устал для игры")
+        self.mood += 2
+        self.energy -= 2
+        self.hunger += 1
+        self._clamp()
+        print(f"{self.name} поиграл. Настроение: {self.mood}")
+
+    def sleep(self):
+        if self.is_sleeping:
+            print(f"{self.name} уже спит")
+            return
+        self.is_sleeping = True
+        print(f"{self.name} лёг спать")
+
+    def wake_up(self):
+        if not self.is_sleeping:
+            print(f"{self.name} уже бодрствует")
+            return
+        self.is_sleeping = False
+        print(f"{self.name} проснулся")</pre>
+
+<h3>Шаг 4. Время (роль C)</h3>
+<pre>    def wants_to_sleep(self, hour):
+        return hour &gt;= 22 or hour &lt; 6
+
+    def pass_time(self, hours=1):
+        for _ in range(hours):
+            self.hour = (self.hour + 1) % 24
+            if self.is_sleeping:
+                self.energy += 2
+                self.hunger += 1
+            else:
+                self.hunger += 1
+                self.energy -= 1
+                self.mood -= 1
+            self._clamp()
+            if self.wants_to_sleep(self.hour) and not self.is_sleeping:
+                print(f"{self.name} хочет спать (время {self.hour}:00)")
+        print(f"Прошло {hours} ч. Сейчас {self.hour}:00")</pre>
+
+<h3>Шаг 5. Вывод состояния (роль A)</h3>
+<pre>    def __str__(self):
+        status = "спит" if self.is_sleeping else "бодрствует"
+        return (f"[{self.name}] {status} | голод: {self.hunger} | "
+                f"настроение: {self.mood} | энергия: {self.energy} | "
+                f"время: {self.hour}:00")</pre>
+
+<h3>Шаг 6. Меню и основной цикл (роль E)</h3>
+<pre>def menu(pet):
+    while True:
+        print("\n--- Тамагочи ---")
+        print("1. Показать состояние")
+        print("2. Покормить")
+        print("3. Поиграть")
+        print("4. Уложить спать")
+        print("5. Разбудить")
+        print("6. Пропустить время")
+        print("0. Выход")
+        choice = input("Выберите действие: ").strip()
+
+        try:
+            if choice == "1":
+                print(pet)
+            elif choice == "2":
+                pet.feed()
+            elif choice == "3":
+                pet.play()
+            elif choice == "4":
+                pet.sleep()
+            elif choice == "5":
+                pet.wake_up()
+            elif choice == "6":
+                hours = int(input("Сколько часов пропустить? "))
+                pet.pass_time(hours)
+            elif choice == "0":
+                print("Пока!")
+                break
+            else:
+                print("Неверный выбор")
+        except PetError as e:
+            print(f"Ошибка: {e}")
+        except ValueError:
+            print("Ошибка: введите число")</pre>
+
+<h3>Шаг 7. Точка входа (роль G/H)</h3>
+<pre>def main():
+    name = input("Как зовут питомца? ").strip() or "Питомец"
+    pet = Pet(name)
+    print(f"Создан питомец: {pet.name}")
+    menu(pet)
+
+if __name__ == "__main__":
+    main()</pre>
+
+<div class="page-break"></div>
+
+<h2>3. Полный готовый код</h2>
+<pre>class PetError(Exception):
+    pass
+
+class PetTooTiredError(PetError):
+    pass
+
+class PetTooHungryError(PetError):
+    pass
+
+class PetAsleepError(PetError):
+    pass
+
+
+class Pet:
+    MIN_VALUE = 0
+    MAX_VALUE = 10
+
+    def __init__(self, name):
+        self.name = name
+        self.hunger = 5
+        self.mood = 5
+        self.energy = 5
+        self.is_sleeping = False
+        self.hour = 12
+
+    def _clamp(self):
+        self.hunger = max(self.MIN_VALUE, min(self.MAX_VALUE, self.hunger))
+        self.mood = max(self.MIN_VALUE, min(self.MAX_VALUE, self.mood))
+        self.energy = max(self.MIN_VALUE, min(self.MAX_VALUE, self.energy))
+
+    def feed(self):
+        if self.is_sleeping:
+            raise PetAsleepError(f"{self.name} спит и не может есть")
+        self.hunger -= 3
+        self.mood += 1
+        self._clamp()
+        print(f"{self.name} покушал. Голод: {self.hunger}")
+
+    def play(self):
+        if self.is_sleeping:
+            raise PetAsleepError(f"{self.name} спит и не может играть")
+        if self.energy &lt; 2:
+            raise PetTooTiredError(f"{self.name} слишком устал для игры")
+        self.mood += 2
+        self.energy -= 2
+        self.hunger += 1
+        self._clamp()
+        print(f"{self.name} поиграл. Настроение: {self.mood}")
+
+    def sleep(self):
+        if self.is_sleeping:
+            print(f"{self.name} уже спит")
+            return
+        self.is_sleeping = True
+        print(f"{self.name} лёг спать")
+
+    def wake_up(self):
+        if not self.is_sleeping:
+            print(f"{self.name} уже бодрствует")
+            return
+        self.is_sleeping = False
+        print(f"{self.name} проснулся")
+
+    def wants_to_sleep(self, hour):
+        return hour &gt;= 22 or hour &lt; 6
+
+    def pass_time(self, hours=1):
+        for _ in range(hours):
+            self.hour = (self.hour + 1) % 24
+            if self.is_sleeping:
+                self.energy += 2
+                self.hunger += 1
+            else:
+                self.hunger += 1
+                self.energy -= 1
+                self.mood -= 1
+            self._clamp()
+            if self.wants_to_sleep(self.hour) and not self.is_sleeping:
+                print(f"{self.name} хочет спать (время {self.hour}:00)")
+        print(f"Прошло {hours} ч. Сейчас {self.hour}:00")
+
+    def __str__(self):
+        status = "спит" if self.is_sleeping else "бодрствует"
+        return (f"[{self.name}] {status} | голод: {self.hunger} | "
+                f"настроение: {self.mood} | энергия: {self.energy} | "
+                f"время: {self.hour}:00")
+
+
+def menu(pet):
+    while True:
+        print("\n--- Тамагочи ---")
+        print("1. Показать состояние")
+        print("2. Покормить")
+        print("3. Поиграть")
+        print("4. Уложить спать")
+        print("5. Разбудить")
+        print("6. Пропустить время")
+        print("0. Выход")
+        choice = input("Выберите действие: ").strip()
+
+        try:
+            if choice == "1":
+                print(pet)
+            elif choice == "2":
+                pet.feed()
+            elif choice == "3":
+                pet.play()
+            elif choice == "4":
+                pet.sleep()
+            elif choice == "5":
+                pet.wake_up()
+            elif choice == "6":
+                hours = int(input("Сколько часов пропустить? "))
+                pet.pass_time(hours)
+            elif choice == "0":
+                print("Пока!")
+                break
+            else:
+                print("Неверный выбор")
+        except PetError as e:
+            print(f"Ошибка: {e}")
+        except ValueError:
+            print("Ошибка: введите число")
+
+
+def main():
+    name = input("Как зовут питомца? ").strip() or "Питомец"
+    pet = Pet(name)
+    print(f"Создан питомец: {pet.name}")
+    menu(pet)
+
+
+if __name__ == "__main__":
+    main()</pre>
+
+<h2>4. Тестирование (роль F)</h2>
+<ol>
+  <li>Создать питомца → показать статус.</li>
+  <li>Покормить → <code>hunger</code> уменьшился.</li>
+  <li>Поиграть → <code>mood</code> вырос, <code>energy</code> упал.</li>
+  <li>Уложить спать → статус «спит».</li>
+  <li>Попробовать покормить спящего → <code>PetAsleepError</code>, программа не падает.</li>
+  <li>Пропустить 15 часов → питомец захочет спать.</li>
+  <li>Ввести букву в меню → ошибка обрабатывается.</li>
+</ol>
+
+<h2>5. Оформление и сдача</h2>
+<ul>
+  <li>PEP8: отступы 4 пробела, имена <code>snake_case</code>.</li>
+  <li>Комментарии и докстринги.</li>
+  <li>Поясняющие строки при выводе.</li>
+  <li>Сдать в Eduapp.</li>
+  <li>В RocketChat: <code>Фамилия Имя - роль X, Готово: ... Файл: ... Передано сборщику G</code>.</li>
+</ul>
+
+<div class="note">
+  <b>Важно:</b> если что-то не готово — ставим временную заглушку
+  (<code>raise NotImplementedError("...")</code>) и собираем проект дальше.
+  Проект проверяется как единая программа.
+</div>
+
+<h2>6. Чек-лист перед сдачей</h2>
+<ul>
+  <li>Класс <code>Pet</code> создаётся без ошибок.</li>
+  <li><code>feed()</code>, <code>play()</code>, <code>sleep()</code>, <code>wake_up()</code> работают.</li>
+  <li>Значения всегда в диапазоне 0..10.</li>
+  <li>Время меняет состояние (<code>pass_time</code>).</li>
+  <li>Ошибки не завершают программу.</li>
+  <li>Код отформатирован по PEP8.</li>
+  <li>Файл отправлен в Eduapp.</li>
+  <li>Сообщение в RocketChat отправлено.</li>
+</ul>
+
+</body>
+</html>
