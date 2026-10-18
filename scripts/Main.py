@@ -1,4 +1,7 @@
-#D
+import math
+
+
+# часть D
 class PetError(Exception):
     pass
 
@@ -11,7 +14,8 @@ class PetTooHungryError(PetError):
 class PetAsleepError(PetError):
     pass
 
-#A
+
+# часть A
 class Pet:
     MIN_VALUE = 0
     MAX_VALUE = 10
@@ -23,6 +27,7 @@ class Pet:
         self.energy = 5
         self.is_sleeping = False
         self.hour = 12
+        self._partial_hour = 0.0
 
     def _clamp(self):
         self.hunger = max(self.MIN_VALUE, min(self.MAX_VALUE, self.hunger))
@@ -36,9 +41,14 @@ class Pet:
             f"голод: {self.hunger} | "
             f"настроение: {self.mood} | "
             f"энергия: {self.energy} | "
-            f"время: {self.hour}:00"
+            f"время: {self._format_time()}"
         )
 
+    def _format_time(self) -> str:
+        total_minutes = round(self.hour * 60) % (24 * 60)
+        return f"{total_minutes // 60:02d}:{total_minutes % 60:02d}"
+
+# часть B
     def feed(self):
         if self.is_sleeping:
             raise PetAsleepError(f"{self.name} спит и не может есть")
@@ -47,7 +57,7 @@ class Pet:
         self._clamp()
         print(f"{self.name} поел. Голод: {self.hunger}")
 
-#B
+
     def play(self):
         if self.is_sleeping:
             raise PetAsleepError(f"{self.name} спит и не может играть")
@@ -73,75 +83,84 @@ class Pet:
         self.is_sleeping = False
         print(f"{self.name} проснулся")
 
-#C
-    def wants_to_sleep(self, hour):
+
+# часть C
+    def wants_to_sleep(self, hour: float) -> bool:
         return hour >= 22 or hour < 6
 
-    def pass_time(self, hours=1.0):
+    def pass_time(self, hours: float = 1.0) -> None:
+        if not math.isfinite(hours) or hours <= 0:
+            raise ValueError("Количество часов должно быть положительным числом.")
+
+        total = self._partial_hour + hours
+        intervals = int(total + 1e-9)
+        self._partial_hour = total - intervals
+        if self._partial_hour < 1e-9:
+            self._partial_hour = 0.0
+
+        starting_hour = int(self.hour)
         self.hour = (self.hour + hours) % 24
 
-        intervals = int(hours)
-
-        if hours - intervals >= 0.5:
-            intervals += 1
-
-        if intervals > 0:
-            if not self.is_sleeping:
-                self.hunger = min(10, self.hunger + intervals)
-                self.energy = max(0, self.energy - intervals)
-                self.mood = max(0, self.mood - intervals)
+        if intervals:
+            self.hunger += intervals
+            if self.is_sleeping:
+                self.energy += 2 * intervals
             else:
-                self.energy = min(10, self.energy + 2 * intervals)
-                self.hunger = min(10, round(self.hunger + 0.5 * intervals))
-                self.mood = min(10, round(self.mood + 0.5 * intervals))
+                self.energy -= intervals
+                self.mood -= intervals
+            self._clamp()
 
-        if self.hunger >= 10:
-            print(f"{self.name} умер от голода")
-            self.is_alive = False
-        elif self.mood <= 0:
-            print(f"{self.name} умер от депрессии")
-            self.is_alive = False
+            if not self.is_sleeping:
+                for offset in range(min(intervals, 24)):
+                    hour = (starting_hour + offset + 1) % 24
+                    if self.wants_to_sleep(hour):
+                        print(f"{self.name} хочет спать (время {hour:02d}:00)")
+                        break
 
-#E
-def menu(pet):
-    """Показывать меню и выполнять команды, пока игрок не выберет выход."""
+        print(f"Прошло {hours:g} ч. Сейчас {self._format_time()}")
+
+
+# часть E
+def menu(pet: Pet) -> bool:
     while True:
-        if not getattr(pet, "is_alive", True):
-            print("Игра окончена. Спасибо за игру!")
-            return
-
-        print("\n--- ТАМАГОЧИ ---")
+        print("\n--- Tamogochi Life! от команды 'I use Arhc BTW' ---")
         print("1. Показать состояние")
         print("2. Покормить")
         print("3. Поиграть")
         print("4. Уложить спать")
         print("5. Разбудить")
         print("6. Пропустить время")
+        print("7. Начать новую игру")
         print("0. Выход")
 
-        choice = input("Выберите действие: ").strip()
+        try:
+            choice = input("Выберите действие: ").strip()
 
-        if choice == "1":
-            print(pet)
-        elif choice == "2":
-            pet.feed()
-        elif choice == "3":
-            pet.play()
-        elif choice == "4":
-            pet.sleep()
-        elif choice == "5":
-            pet.wake_up()
-        elif choice == "6":
-            hours = int(input("Сколько часов пропустить? ").strip())
-            if hours <= 0:
-                print("Ошибка: количество часов должно быть больше нуля.")
-                continue
-            pet.pass_time(hours)
-        elif choice == "0":
-            print("Спасибо за игру! Пока!")
-            return
-        else:
-            print("Неверный выбор. Введите номер пункта от 0 до 6.")
+            if choice == "1":
+                print(pet)
+            elif choice == "2":
+                pet.feed()
+            elif choice == "3":
+                pet.play()
+            elif choice == "4":
+                pet.sleep()
+            elif choice == "5":
+                pet.wake_up()
+            elif choice == "6":
+                try:
+                    hours = float(input("Сколько часов пропустить? ").strip())
+                    pet.pass_time(hours)
+                except ValueError as error:
+                    print(f"Ошибка: {error}")
+            elif choice == "0":
+                print("Спасибо за игру! Пока!")
+                return False
+            elif choice == "7":
+                return True
+            else:
+                print("Неверный выбор. Введите номер пункта от 0 до 7.")
+        except PetError as error:
+            print(error)
 
 def main():
     while True:
@@ -149,17 +168,11 @@ def main():
             name = input("Как зовут питомца? ").strip() or "Питомец"
             pet = Pet(name)
             print(f"Создан питомец: {pet.name}")
-            menu(pet)
+            if not menu(pet):
+                return
             print("Начало новой игры...")
-        except ValueError:
-                    print("Ошибка: введите целое число часов.")
-                    return
         except (EOFError, KeyboardInterrupt):
-                    print("\nИгра завершена.")
-                    return
-        except Exception as error:
-                    print(f"Не удалось выполнить действие: {error}")
-                    return
+            print("\nИгра завершена.")
         
 
 if __name__ == "__main__":
