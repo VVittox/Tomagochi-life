@@ -1,11 +1,13 @@
+import math
 
+    
 # часть D
 class PetError(Exception):
     pass
 
 class PetTooTiredError(PetError):
     pass
-
+sss
 class PetTooHungryError(PetError):
     pass
 
