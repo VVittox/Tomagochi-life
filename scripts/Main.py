@@ -83,6 +83,12 @@ class Pet:
             return
         self.is_sleeping = False
         print(f"{self.name} проснулся")
+        self.energy += 5
+        clamped_energy = max(self.MIN_VALUE, min(self.MAX_VALUE, self.energy))
+        if clamped_energy != self.energy:
+            self.energy = clamped_energy
+            print(f"{self.name} проснулся, но энергия ограничена до {self.energy}")
+            
 
 
 # часть C
