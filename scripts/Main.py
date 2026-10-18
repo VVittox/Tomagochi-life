@@ -1,5 +1,3 @@
-import math
-
 
 # часть D
 class PetError(Exception):
