@@ -28,6 +28,7 @@ class Pet:
         self.is_sleeping = False
         self.hour = 12
         self._partial_hour = 0.0
+        self.is_alive = True
 
     def _clamp(self):
         self.hunger = max(self.MIN_VALUE, min(self.MAX_VALUE, self.hunger))
@@ -92,37 +93,69 @@ class Pet:
         if not math.isfinite(hours) or hours <= 0:
             raise ValueError("Количество часов должно быть положительным числом.")
 
-        total = self._partial_hour + hours
-        intervals = int(total + 1e-9)
-        self._partial_hour = total - intervals
-        if self._partial_hour < 1e-9:
+        if not self.is_alive:
+            print(f"{self.name} уже умер. Начните новую игру.")
+            return
+
+        remaining = hours
+        elapsed = 0.0
+        time_to_next_tick = 1 - self._partial_hour
+        while remaining + 1e-9 >= time_to_next_tick:
+            self.hour = (self.hour + time_to_next_tick) % 24
+            remaining -= time_to_next_tick
+            elapsed += time_to_next_tick
             self._partial_hour = 0.0
 
-        starting_hour = int(self.hour)
-        self.hour = (self.hour + hours) % 24
-
-        if intervals:
-            self.hunger += intervals
+            self.hunger += 1
             if self.is_sleeping:
-                self.energy += 2 * intervals
+                self.energy += 2
             else:
-                self.energy -= intervals
-                self.mood -= intervals
+                self.energy -= 1
+                self.mood -= 1
             self._clamp()
 
-            if not self.is_sleeping:
-                for offset in range(min(intervals, 24)):
-                    hour = (starting_hour + offset + 1) % 24
-                    if self.wants_to_sleep(hour):
-                        print(f"{self.name} хочет спать (время {hour:02d}:00)")
-                        break
+            if self.hunger >= self.MAX_VALUE:
+                self.is_alive = False
+                print(f"{self.name} умер от голода.")
+            elif self.mood <= self.MIN_VALUE:
+                self.is_alive = False
+                print(f"{self.name} умер от депрессии.")
 
-        print(f"Прошло {hours:g} ч. Сейчас {self._format_time()}")
+            if not self.is_alive:
+                break
+
+            if not self.is_sleeping and self.wants_to_sleep(self.hour):
+                print(f"{self.name} хочет спать (время {int(self.hour):02d}:00)")
+            time_to_next_tick = 1.0
+
+        if self.is_alive and remaining > 1e-9:
+            self.hour = (self.hour + remaining) % 24
+            self._partial_hour += remaining
+            elapsed += remaining
+
+        print(f"Прошло {elapsed:g} ч. Сейчас {self._format_time()}")
 
 
 # часть E
 def menu(pet: Pet) -> bool:
     while True:
+        if not pet.is_alive:
+            print("\nИгра окончена: питомец умер.")
+            print("7. Начать новую игру")
+            print("0. Выход")
+            try:
+                choice = input("Выберите действие: ").strip()
+            except (EOFError, KeyboardInterrupt):
+                print("\nИгра завершена.")
+                return False
+            if choice == "7":
+                return True
+            if choice == "0":
+                print("Спасибо за игру! Пока!")
+                return False
+            print("Питомец умер. Введите 7 для новой игры или 0 для выхода.")
+            continue
+
         print("\n--- Tamogochi Life! от команды 'I use Arhc BTW' ---")
         print("1. Показать состояние")
         print("2. Покормить")
