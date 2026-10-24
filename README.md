@@ -1,4 +1,4 @@
-# Tamagochi Life
+# Tomagochi Life
 команда называется "I use Arch BTW"
 Team Leaders:
 -@VVittox
