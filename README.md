@@ -1,4 +1,4 @@
-# Tamagotchi Life — объединённый проект (этапы 1 + 2)
+# Tamagotchi Life 
 
 Проект для МШП, команды **I use Arch BTW**. Основан на двух версиях из архива
 [VVittox/Tomagochi-life](https://github.com/VVittox/Tomagochi-life), презентации
@@ -7,9 +7,6 @@
 **Запуск происходит только через один файл — `main.py`.** Остальные `.py` — модули игры, а не альтернативные точки входа.
 
 ## Как запустить
-
-Нужен Python **3.10 или новее**.
-
 ```bash
 python -m venv .venv
 ```
