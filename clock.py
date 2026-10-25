@@ -1,4 +1,3 @@
-"""Игровые часы: перенос и доработка assets/scripts/clock.py."""
 import math
 
 
@@ -14,7 +13,6 @@ class GameClock:
 
     @property
     def hour(self) -> float:
-        """Для JSON: 12.5 означает 12:30."""
         return self._minutes / 60
 
     def advance(self, hours: float) -> None:

@@ -1,4 +1,6 @@
 import math
+import colorama
+
 from pathlib import Path
 
 from clock import GameClock

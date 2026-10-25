@@ -65,10 +65,6 @@ class Pet:
         return True
 
     def on_hour_passed(self) -> None:
-        """Последствия каждого полного часа из старого main(Old).py.
-
-        Часы здесь НЕ хранятся: Game вызывает метод при смене времени.
-        """
         if not self.is_alive:
             return
         self.hunger += 1

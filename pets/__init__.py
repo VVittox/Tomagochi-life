@@ -1,4 +1,3 @@
-"""Базовый питомец и два наследника."""
 from .pet import Pet
 from .cat import Cat
 from .dog import Dog

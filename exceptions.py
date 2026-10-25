@@ -1,40 +1,34 @@
-"""Единые исключения и проверка ввода — из Dpart.py."""
-
-
 class TamagotchiError(Exception):
-    """Ошибка в игре Тамагочи."""
-
+    pass
 
 class PetError(TamagotchiError):
-    """Действие питомца невозможно."""
-
-
+    pass
 class PetTooTiredError(PetError):
-    """Не хватает энергии."""
+    pass
 
 
 class PetTooHungryError(PetError):
-    """Слишком сильный голод."""
+    pass
 
 
 class PetAsleepError(PetError):
-    """Питомец спит."""
+    pass
 
 
 class PetDeadError(PetError):
-    """Игра закончена для этого питомца."""
+    pass
 
 
 class InvalidNameError(TamagotchiError):
-    """Неподходящее имя."""
+    pass
 
 
 class InvalidMenuInputError(TamagotchiError):
-    """Неподходящий пункт меню."""
+    pass
 
 
 class SaveFormatError(TamagotchiError):
-    """Повреждённое или несовместимое сохранение."""
+    pass
 
 
 def check_name(name: str) -> str:
